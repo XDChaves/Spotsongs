@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="/static/indexCSS.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon/site.webmanifest">
+    
+
+    <title>PROJETO-BIG-DATA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script src="/static/script.js" defer></script>
+
+</head>
+
+<body>
+    <header id="main-header">
+        <nav>
+            <a href="" class="logo-header">
+                <img src="/static/images/Gearman.png">
+                <text class="text">SpotSongS</text>
+            </a>
+        
+            <div class="navbar-header">
+                <a href="">Catalogo</a>
+                <a href="">Comparador</a>
+                <a href="">Sobre</a>
+            </div>
+
+            {% if not session.access_token %}
+                <a href="/login">
+                    <button id="login">LOGIN</button>
+                </a>
+            {% else %}
+                <a href="/logout">
+                    <button id="logout">LOGOUT</button>
+                </a>
+            {% endif %}
+
+        </nav>
+    </header>
+
+    <section class="firstcontainer">    
+       <div class="slidebox">
+            <div class="backgroundtext">
+                <div class="text">
+                    <h1></h1>
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="carousel-controls">
+                <input type="radio" name="carousel" id="slide1" class="carousel-radio" data-index="0">
+                <label for="slide1"></label>
+            
+                <input type="radio" name="carousel" id="slide2" class="carousel-radio" data-index="1">
+                <label for="slide2"></label>
+            
+                <input type="radio" name="carousel" id="slide3" class="carousel-radio" data-index="2">
+                <label for="slide3"></label>
+            
+                <input type="radio" name="carousel" id="slide4" class="carousel-radio" data-index="3">
+                <label for="slide4"></label>
+            
+                <input type="radio" name="carousel" id="slide5" class="carousel-radio" data-index="4">
+                <label for="slide5"></label>
+            
+                <input type="radio" name="carousel" id="slide6" class="carousel-radio" data-index="5">
+                <label for="slide6"></label>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="secondcontainer">
+        <div class="featurecontent">
+            <div class="featurebox">    
+                
+                <div class="cardbox">
+                    <div class="featureteste">
+                        
+                        <div class="front0" id="front"></div>
+
+                        <div class="back">
+                            <h1>BRASILEIROS NO TOPO</h1>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="cardbox">
+                    <div class="featureteste">
+                        
+                        <div class="front1" id="front"></div>
+
+                        <div class="back">
+                            <h1>GENERO MUSICAL MAIS POPULAR</h1>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="cardbox">
+                    <div class="featureteste">
+                        <div class="front2" id="front"></div>
+
+                        
+                        <a href="" class="back" id="back2">
+                            <h1>MAIS OUVIDOS DE TODOS OS TEMPOS</h1>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div class="cardbox">
+                    <div class="featureteste">
+                        
+                        <div class="front3" id="front"></div>
+
+                        <div class="back">
+                            <h1></h1>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="cardbox">
+                    <div class="featureteste">
+                        
+                        <div class="front4" id="front"></div>
+
+                        <div class="back">
+                            <h1></h1>
+                        </div>
+
+                    </div>
+                </div>
+
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="thirdcontainer">
+        {% if session.access_token %}
+            <div id="recent-tracks">
+                <!-- Músicas recentes serão carregadas aqui -->
+            </div>
+        {% else %}
+        <h2>Faça login para ver suas músicas recentes</h2>
+        {% endif %}
+    </section>
+</body>
+
+</html>
