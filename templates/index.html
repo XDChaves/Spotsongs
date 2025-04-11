@@ -27,7 +27,7 @@
 <body>
     <header id="main-header">
         <nav>
-            <a href="" class="logo-header">
+            <a href="/templates/index.html" class="logo-header">
                 <img src="/static/images/Gearman.png">
                 <text class="text">SpotSongS</text>
             </a>
@@ -155,6 +155,7 @@
 
     <section class="thirdcontainer">
         {% if session.access_token %}
+        <p class="username1">Olá, {{ username }}!<br></p>
             <div id="recent-tracks">
                 <!-- Músicas recentes serão carregadas aqui -->
             </div>
@@ -162,6 +163,22 @@
         <h2>Faça login para ver suas músicas recentes</h2>
         {% endif %}
     </section>
+
+    <script>
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get("spotify_logout") === "1") {
+                // Abre o logout do Spotify em uma nova aba
+                window.open("https://accounts.spotify.com/logout", "_blank");
+        
+                // Remove o parâmetro da URL sem recarregar a página
+                const cleanUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        };
+    </script>
+      
 </body>
 
 </html>

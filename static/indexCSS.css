@@ -276,6 +276,12 @@ body {
   padding: 2rem;
   height: fit-content;
 
+  .username1{
+    color: rgb(253, 253, 253);
+    font-size: 2rem;
+    background-color: #000000;
+  }
+
   .recent-tracks{
     display: flex;
     justify-content: center;

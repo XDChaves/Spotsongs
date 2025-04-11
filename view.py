@@ -1,18 +1,28 @@
-from flask import render_template, request, redirect, url_for, session, jsonify
-import time
+from flask import render_template, request, redirect, session, url_for, jsonify
 import requests
+import time
 from main import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPOTIFY_AUTH_URL, SPOTIFY_TOKEN_URL, SPOTIFY_API_BASE_URL, AUTH_SCOPE
 
+# Página inicial (usuário logado ou não)
 def index():
-    if 'access_token' in session:
-        return redirect(url_for('dashboard')) # Ou renderizar com dados de faixas recentes
-    else:
-        return render_template('index.html') # Renderizar conteúdo para não logados
+    username = session.get("username")
+    return render_template('index.html', username=username)
 
+# Redirecionar para o login do Spotify
 def login():
     auth_url = f"{SPOTIFY_AUTH_URL}?client_id={CLIENT_ID}&response_type=code&redirect_uri={REDIRECT_URI}&scope={AUTH_SCOPE}"
     return redirect(auth_url)
 
+# Encerrar sessão
+def logout():
+    session.pop("access_token", None)
+    session.pop("refresh_token", None)
+    session.pop("expires_at", None)
+    session.pop("username", None)
+
+    return redirect(url_for("index", spotify_logout="1"))
+
+# Callback do Spotify depois do login
 def callback():
     if "error" in request.args:
         return jsonify({"error": f"Erro de autenticação: {request.args['error']}"})
@@ -36,10 +46,21 @@ def callback():
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = time.time() + token_info["expires_in"]
 
-        return redirect(url_for("dashboard"))
+        # Após obter o token, pega o nome do usuário
+        headers = {
+            "Authorization": f"Bearer {session['access_token']}"
+        }
+        user_response = requests.get(f"{SPOTIFY_API_BASE_URL}/me", headers=headers)
+
+        if user_response.status_code == 200:
+            user_data = user_response.json()
+            session["username"] = user_data.get("display_name", "Usuário")
+
+        return redirect(url_for("index"))
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Erro ao obter tokens: {e}"}), 500
 
+# Painel (faixas recentes)
 def dashboard():
     access_token = session.get("access_token")
     if not access_token:
@@ -65,20 +86,15 @@ def dashboard():
                 "name": track["name"],
                 "artist": track["artists"][0]["name"],
                 "album": track["album"]["name"],
-                "image": track["album"]["images"][0]["url"]  # capa do álbum
+                "image": track["album"]["images"][0]["url"]
             }
             recent_tracks.append(track_info)
 
-        return render_template("index.html", tracks=recent_tracks)
+        username = session.get("username")
+        return render_template("index.html", tracks=recent_tracks, username=username)
     else:
-        return jsonify({"error": "Erro ao buscar faixas recentes", "details": response.json()}), response.status_code
-
-def logout():
-    session.pop("access_token", None)
-    session.pop("refresh_token", None)
-    session.pop("expires_at", None)
-
-    return redirect("https://accounts.spotify.com/logout")
+        return jsonify({"error": "Erro ao buscar faixas recentes", "details": response.json()}), response.status_code   
+# Retorna HTML com as faixas recentes
 
 def recent_tracks():
     if 'access_token' not in session:
@@ -95,7 +111,6 @@ def recent_tracks():
     items = response.json().get('items', [])
 
     html = '<ul class="songs-list">'
-
     for item in items:
         track = item['track']
         name = track['name']
@@ -109,11 +124,11 @@ def recent_tracks():
             Artista: {artist}<br>
             Álbum: {album}<br><br>
         </div>
-
         """
     html += '</ul>'
     return html
 
+# Rotas
 view = [
     ("/", index),
     ("/login", login),
