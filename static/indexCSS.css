@@ -280,19 +280,22 @@ body {
     color: rgb(253, 253, 253);
     font-size: 2rem;
     background-color: #000000;
+    margin-bottom: 1rem;
   }
+}
 
-  .recent-tracks{
+#recent-tracks{
+  .songs-list{
+    background-color: #2f1163;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .songs{
-    width: fit-content;
-    height: fit-content;
+    justify-items: stretch;
+    gap: 1rem;
+
+    .songs{
+      background-color: #1b0000;
+      width: 300px;
+      border: var(--border);
+    }
   }
 }
 

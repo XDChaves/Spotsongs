@@ -2,25 +2,12 @@ from flask import render_template, request, redirect, session, url_for, jsonify
 import requests
 import time
 from main import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPOTIFY_AUTH_URL, SPOTIFY_TOKEN_URL, SPOTIFY_API_BASE_URL, AUTH_SCOPE
+from spotutility import refresh_access_token, login, logout
 
 # Página inicial (usuário logado ou não)
 def index():
     username = session.get("username")
     return render_template('index.html', username=username)
-
-# Redirecionar para o login do Spotify
-def login():
-    auth_url = f"{SPOTIFY_AUTH_URL}?client_id={CLIENT_ID}&response_type=code&redirect_uri={REDIRECT_URI}&scope={AUTH_SCOPE}"
-    return redirect(auth_url)
-
-# Encerrar sessão
-def logout():
-    session.pop("access_token", None)
-    session.pop("refresh_token", None)
-    session.pop("expires_at", None)
-    session.pop("username", None)
-
-    return redirect(url_for("index", spotify_logout="1"))
 
 # Callback do Spotify depois do login
 def callback():
@@ -60,80 +47,56 @@ def callback():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Erro ao obter tokens: {e}"}), 500
 
-# Painel (faixas recentes)
-def dashboard():
+def get_recent_tracks(limit=6):
     access_token = session.get("access_token")
-    if not access_token:
-        return redirect(url_for("login"))
+    expires_at = session.get("expires_at", 0)
 
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    # Atualiza token se expirado
+    if time.time() > expires_at:
+        refreshed = refresh_access_token()
+        if not refreshed:
+            return None, redirect(url_for("login"))
 
-    params = {
-        "limit": 10
-    }
+        access_token = session.get("access_token")  # atualiza variável com novo token
 
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"limit": limit}
     response = requests.get(f"{SPOTIFY_API_BASE_URL}/me/player/recently-played", headers=headers, params=params)
 
-    if response.status_code == 200:
-        data = response.json()
-        recent_tracks = []
+    if response.status_code != 200:
+        error_json = jsonify({
+            "error": "Erro ao buscar faixas recentes",
+            "details": response.json()
+        })
+        return None, error_json
 
-        for item in data.get("items", []):
-            track = item["track"]
-            track_info = {
-                "name": track["name"],
-                "artist": track["artists"][0]["name"],
-                "album": track["album"]["name"],
-                "image": track["album"]["images"][0]["url"]
-            }
-            recent_tracks.append(track_info)
+    items = response.json().get("items", [])
+    recent_tracks = []
+    for item in items:
+        track = item["track"]
+        track_info = {
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "album": track["album"]["name"],
+            "image": track["album"]["images"][0]["url"]
+        }
+        recent_tracks.append(track_info)
 
-        username = session.get("username")
-        return render_template("index.html", tracks=recent_tracks, username=username)
-    else:
-        return jsonify({"error": "Erro ao buscar faixas recentes", "details": response.json()}), response.status_code   
-# Retorna HTML com as faixas recentes
+    return recent_tracks, None
 
 def recent_tracks():
-    if 'access_token' not in session:
-        return redirect(url_for('index'))
+    recent_tracks, error = get_recent_tracks()
 
-    access_token = session['access_token']
-    headers = {'Authorization': f'Bearer {access_token}'}
-    params = {'limit': 10}
-    response = requests.get('https://api.spotify.com/v1/me/player/recently-played', headers=headers, params=params)
+    if error:
+        return error  # pode ser redirect ou jsonify
 
-    if response.status_code != 200:
-        return 'Erro ao obter faixas recentes'
-
-    items = response.json().get('items', [])
-
-    html = '<ul class="songs-list">'
-    for item in items:
-        track = item['track']
-        name = track['name']
-        artist = track['artists'][0]['name']
-        album = track['album']['name']
-        image_url = track['album']['images'][0]['url']
-        html += f"""
-        <div class="songs">
-            <img src="{image_url}" width="100"><br>
-            <strong>{name}</strong><br>
-            Artista: {artist}<br>
-            Álbum: {album}<br><br>
-        </div>
-        """
-    html += '</ul>'
-    return html
+    return jsonify(recent_tracks)
 
 # Rotas
 view = [
     ("/", index),
     ("/login", login),
     ("/callback", callback),
-    ("/dashboard", dashboard),
     ("/logout", logout),
     ("/recent-tracks", recent_tracks)
 ]

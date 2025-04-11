@@ -58,14 +58,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function getRecentTracks() {
-fetch('/recent-tracks')
-    .then(response => response.text())
-    .then(data => {
-    document.getElementById('recent-tracks').innerHTML = data;
-    });
-}   
+    fetch('/recent-tracks')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('recent-tracks');
+            container.innerHTML = "";
+
+            if (data.error) {
+                container.innerHTML = "<p>Erro ao obter faixas recentes.</p>";
+                return;
+            }
+
+            const list = document.createElement('ul');
+            list.classList.add('songs-list');
+
+            data.forEach(track => {
+                const songDiv = document.createElement('div');
+                songDiv.classList.add('songs');
+                songDiv.innerHTML = `
+                    <img src="${track.image}" width="100"><br>
+                    <strong>${track.name}</strong><br>
+                    Artista: ${track.artist}<br>
+                    Álbum: ${track.album}<br><br>
+                `;
+                list.appendChild(songDiv);
+            });
+
+            container.appendChild(list);
+        })
+        .catch(error => {
+            console.error("Erro ao carregar faixas:", error);
+            document.getElementById('recent-tracks').innerHTML = "<p>Erro ao carregar faixas.</p>";
+        });
+}
+
 // Atualiza automaticamente a cada 60 segundos
 setInterval(getRecentTracks, 60000);
+getRecentTracks(); // executa na primeira vez
 
-// Carrega na primeira vez
-getRecentTracks();

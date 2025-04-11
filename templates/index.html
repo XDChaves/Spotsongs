@@ -155,12 +155,12 @@
 
     <section class="thirdcontainer">
         {% if session.access_token %}
-        <p class="username1">Olá, {{ username }}!<br></p>
+            <p class="username1">Olá, {{ username }}!<br></p>
             <div id="recent-tracks">
                 <!-- Músicas recentes serão carregadas aqui -->
             </div>
         {% else %}
-        <h2>Faça login para ver suas músicas recentes</h2>
+            <h2>Faça login para ver suas músicas recentes</h2>
         {% endif %}
     </section>
 
@@ -174,8 +174,7 @@
         
                 // Remove o parâmetro da URL sem recarregar a página
                 const cleanUrl = window.location.origin + window.location.pathname;
-                window.history.replaceState({}, document.title, cleanUrl);
-            }
+                window.history.replaceState({}, document.title, cleanUrl);}
         };
     </script>
       
