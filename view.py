@@ -15,7 +15,12 @@ def index():
     return render_template('index.html', username=username, top_artists=top_artists_list)
 
 def spotmostpopular():
-    return render_template('spotmostpopular.html')
+    username = session.get("username")
+    top_artists_df = extrair_top_artistas_spotify_kworb()
+    top_artists_list = []
+    if top_artists_df is not None:
+        top_artists_list = top_artists_df.head(10).to_dict('records')
+    return render_template('/spotmostpopular.html', username=username, top_artists=top_artists_list)
 
 # Callback do Spotify depois do login
 def callback():

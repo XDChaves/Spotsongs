@@ -1,0 +1,54 @@
+.testx{
+    background-color: #111111;
+    padding: 1rem;
+    color: #ffffff;
+}
+.username1{
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+table {
+    color: #000000;
+    width: 100%; /* Faz a tabela ocupar toda a largura do seu contêiner */
+    border-collapse: collapse; /* Colapsa as bordas entre as células da tabela para uma aparência mais limpa */
+    margin-bottom: 20px; /* Adiciona um espaço abaixo da tabela */
+}
+
+thead th {
+    background-color: #f2f2f2; /* Cor de fundo cinza claro para o cabeçalho */
+    color: #333; /* Cor do texto cinza escuro para o cabeçalho */
+    font-weight: bold; /* Deixa o texto do cabeçalho em negrito */
+    padding: 10px; /* Adiciona espaçamento interno nas células do cabeçalho */
+    text-align: left; /* Alinha o texto do cabeçalho à esquerda */
+    border-bottom: 2px solid #ccc; /* Adiciona uma borda inferior mais grossa ao cabeçalho */
+}
+
+tbody td {
+    padding: 8px; /* Adiciona espaçamento interno nas células de dados */
+    border-bottom: 1px solid #eee; /* Adiciona uma borda inferior cinza clara às células de dados */
+    text-align: left; /* Alinha o texto dos dados à esquerda */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Cor de fundo ligeiramente diferente para linhas pares para melhor leitura */
+}
+tbody tr:nth-child(odd) {
+    background-color: #e2e2e2; /* Cor de fundo branca para linhas ímpares */
+}
+
+/* Opcional: Estilo para colunas específicas */
+.posicao {
+    width: 5%; /* Ajuste a largura conforme necessário */
+    text-align: center; /* Centraliza o número da posição */
+}
+
+.artista {
+    width: 20%; /* Ajuste a largura conforme necessário */
+}
+
+.streams, .daily, .as-lead, .solo, .as-feature {
+    width: 15%; /* Ajuste a largura conforme necessário */
+    text-align: right; /* Alinha dados numéricos à direita para melhor leitura */
+}

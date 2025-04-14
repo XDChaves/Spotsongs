@@ -121,49 +121,6 @@
     </section>
 
     <section class="thirdcontainer">
-        {% if session.access_token %}
-            <p class="username1">Olá, {{ username }}!<br></p>
-            <div id="recent-tracks">
-                <!-- Músicas recentes serão carregadas aqui -->
-            </div>
-        {% else %}
-            <h2>Faça login para ver suas músicas recentes</h2>
-        {% endif %}
-
-        <div class="testando">
-            {% if top_artists %}
-            <h2>Top 10 Artistas (Kworb)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Posição</th>
-                        <th>Artista</th>
-                        <th>Streams</th>
-                        <th>Daily</th>
-                        <th>As lead</th>
-                        <th>Solo</th>
-                        <th>As feature</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for artist in top_artists %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ artist.Artist }}</td>
-                        <td>{{ artist.Streams }}</td>
-                        <td>{{ artist.Daily }}</td>
-                        <td>{{ artist['As lead'] }}</td>
-                        <td>{{ artist.Solo }}</td>
-                        <td>{{ artist['As feature'] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>Não foi possível carregar os dados dos artistas.</p>
-            {% endif %}
-
-        </div>
     </section>
 
     <script>
