@@ -1,13 +1,21 @@
 from flask import render_template, request, redirect, session, url_for, jsonify
 import requests
 import time
-from main import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPOTIFY_AUTH_URL, SPOTIFY_TOKEN_URL, SPOTIFY_API_BASE_URL, AUTH_SCOPE
+from main import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPOTIFY_TOKEN_URL, SPOTIFY_API_BASE_URL
 from spotutility import refresh_access_token, login, logout
+from kworb_utils import extrair_top_artistas_spotify_kworb
 
 # Página inicial (usuário logado ou não)
 def index():
     username = session.get("username")
-    return render_template('index.html', username=username)
+    top_artists_df = extrair_top_artistas_spotify_kworb()
+    top_artists_list = []
+    if top_artists_df is not None:
+        top_artists_list = top_artists_df.head(10).to_dict('records')
+    return render_template('index.html', username=username, top_artists=top_artists_list)
+
+def spotmostpopular():
+    return render_template('spotmostpopular.html')
 
 # Callback do Spotify depois do login
 def callback():
@@ -47,30 +55,39 @@ def callback():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Erro ao obter tokens: {e}"}), 500
 
-def get_recent_tracks(limit=6):
+def make_spotify_request(endpoint, params=None):
     access_token = session.get("access_token")
     expires_at = session.get("expires_at", 0)
 
-    # Atualiza token se expirado
     if time.time() > expires_at:
         refreshed = refresh_access_token()
         if not refreshed:
             return None, redirect(url_for("login"))
-
-        access_token = session.get("access_token")  # atualiza variável com novo token
+        access_token = session.get("access_token")
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    params = {"limit": limit}
-    response = requests.get(f"{SPOTIFY_API_BASE_URL}/me/player/recently-played", headers=headers, params=params)
+    url = f"{SPOTIFY_API_BASE_URL}{endpoint}"
+    response = requests.get(url, headers=headers, params=params)
 
     if response.status_code != 200:
-        error_json = jsonify({
-            "error": "Erro ao buscar faixas recentes",
-            "details": response.json()
+        error_details = ""
+        try:
+            error_details = response.json()
+        except requests.exceptions.JSONDecodeError:
+            error_details = response.text
+        return None, jsonify({
+            "error": f"Erro ao acessar {endpoint}",
+            "status_code": response.status_code,
+            "details": error_details
         })
-        return None, error_json
+    return response.json(), None
 
-    items = response.json().get("items", [])
+def get_recent_tracks(limit=12):
+    data, error = make_spotify_request("/me/player/recently-played", params={"limit": limit})
+    if error:
+        return None, error
+
+    items = data.get("items", [])
     recent_tracks = []
     for item in items:
         track = item["track"]
@@ -83,12 +100,11 @@ def get_recent_tracks(limit=6):
         recent_tracks.append(track_info)
 
     return recent_tracks, None
-
 def recent_tracks():
     recent_tracks, error = get_recent_tracks()
 
     if error:
-        return error  # pode ser redirect ou jsonify
+        return error
 
     return jsonify(recent_tracks)
 
@@ -98,5 +114,6 @@ view = [
     ("/login", login),
     ("/callback", callback),
     ("/logout", logout),
-    ("/recent-tracks", recent_tracks)
+    ("/recent-tracks", recent_tracks),
+    ("/spotmostpopular", spotmostpopular)
 ]

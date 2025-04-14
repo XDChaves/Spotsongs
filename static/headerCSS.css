@@ -1,0 +1,136 @@
+:root {
+  --border: 3px solid rgb(255, 255, 255);
+  --transition: 0.2s linear;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Jost", sans-serif;
+  text-decoration: none;
+  scrollbar-width: none;
+}
+
+body {
+  width: 100dvw;
+  height: fit-content;
+  overflow-x: hidden;
+  background-color: #0f0225;
+}
+
+#main-header {
+  z-index: 1;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 3px 5px rgb(10, 10, 10);
+  background-color: #080016;
+  padding: 0.5rem 4rem;
+  width: 100%;
+  height: 6.25rem;
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+
+    .logo-header {
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 6.111rem;
+        height: 5.5rem;
+      }
+      .text {
+        font-size: 2rem;
+        color: #ffffff;
+      }
+    }
+
+    .navbar-header {
+      a {
+        font-size: 20px;
+        margin: 0 40px;
+        color: #ffffff;
+        position: sticky;
+      }
+    }
+
+    #login, #logout{
+      border: 2px solid rgb(255, 255, 255);
+      transition: 0.2s linear;
+      color: #ffffff;
+      background-color: rgb(0, 0, 0);
+      font-size: 1.5rem;
+      padding: 0.5rem 2rem;
+      border-radius: 3rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}
+
+/* tela padrão */
+@media screen and (min-width: 1280px) {
+  #main-header {
+    nav {
+      .logo-header:hover {
+        cursor: pointer;
+      }
+
+      .navbar-header {
+        a:hover {
+          transition: 0.2s linear;
+          color: rgb(255, 8, 0);
+          border-bottom: 0.8px solid rgb(255, 0, 0);
+          padding-bottom: 3px;
+        }
+      }
+
+      #form-open:hover{
+        transform: scale(1.2);
+        border: 2px solid rgb(0, 0, 0);
+        color: #000000;
+        background-color: rgb(248, 248, 248);
+      }
+    }
+  }
+}
+
+/* tela tablet */
+@media screen and (max-width: 1279px) and (min-width: 921px) {
+    :root {
+        font-size: 12px;
+    }
+    
+    #main-header {
+    nav {
+      .navbar-header {
+        display: none;
+      }
+    }
+  }
+}
+
+/* tela mobile */
+@media screen and (max-width: 920px) {
+  :root {
+    font-size: 8px;
+  }
+  
+  #main-header {
+    nav {
+      .navbar-header {
+        display: none;
+      }
+
+      #form-in {
+        display: none;
+      }
+    }
+  }
+}

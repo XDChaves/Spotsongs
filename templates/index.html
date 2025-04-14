@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="stylesheet" href="/static/indexCSS.css">
+    <link rel="stylesheet" href="/static/headerCSS.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
@@ -25,31 +26,8 @@
 </head>
 
 <body>
-    <header id="main-header">
-        <nav>
-            <a href="/templates/index.html" class="logo-header">
-                <img src="/static/images/Gearman.png">
-                <text class="text">SpotSongS</text>
-            </a>
-        
-            <div class="navbar-header">
-                <a href="">Catalogo</a>
-                <a href="">Comparador</a>
-                <a href="">Sobre</a>
-            </div>
 
-            {% if not session.access_token %}
-                <a href="/login">
-                    <button id="login">LOGIN</button>
-                </a>
-            {% else %}
-                <a href="/logout">
-                    <button id="logout">LOGOUT</button>
-                </a>
-            {% endif %}
-
-        </nav>
-    </header>
+    {% include 'header.html' %}
 
     <section class="firstcontainer">    
        <div class="slidebox">
@@ -89,8 +67,6 @@
                 
                 <div class="cardbox">
                     <div class="featureteste">
-                        
-                        <div class="front0" id="front"></div>
 
                         <div class="back">
                             <h1>BRASILEIROS NO TOPO</h1>
@@ -101,8 +77,6 @@
 
                 <div class="cardbox">
                     <div class="featureteste">
-                        
-                        <div class="front1" id="front"></div>
 
                         <div class="back">
                             <h1>GENERO MUSICAL MAIS POPULAR</h1>
@@ -113,10 +87,8 @@
 
                 <div class="cardbox">
                     <div class="featureteste">
-                        <div class="front2" id="front"></div>
-
                         
-                        <a href="" class="back" id="back2">
+                        <a href="/spotmostpopular" class="back" id="back2">
                             <h1>MAIS OUVIDOS DE TODOS OS TEMPOS</h1>
                         </a>
 
@@ -125,8 +97,6 @@
 
                 <div class="cardbox">
                     <div class="featureteste">
-                        
-                        <div class="front3" id="front"></div>
 
                         <div class="back">
                             <h1></h1>
@@ -137,8 +107,6 @@
 
                 <div class="cardbox">
                     <div class="featureteste">
-                        
-                        <div class="front4" id="front"></div>
 
                         <div class="back">
                             <h1></h1>
@@ -146,8 +114,7 @@
 
                     </div>
                 </div>
-
-                    
+     
                 </div>
             </div>
         </div>
@@ -162,6 +129,41 @@
         {% else %}
             <h2>Faça login para ver suas músicas recentes</h2>
         {% endif %}
+
+        <div class="testando">
+            {% if top_artists %}
+            <h2>Top 10 Artistas (Kworb)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Artista</th>
+                        <th>Streams</th>
+                        <th>Daily</th>
+                        <th>As lead</th>
+                        <th>Solo</th>
+                        <th>As feature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artist in top_artists %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ artist.Artist }}</td>
+                        <td>{{ artist.Streams }}</td>
+                        <td>{{ artist.Daily }}</td>
+                        <td>{{ artist['As lead'] }}</td>
+                        <td>{{ artist.Solo }}</td>
+                        <td>{{ artist['As feature'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Não foi possível carregar os dados dos artistas.</p>
+            {% endif %}
+
+        </div>
     </section>
 
     <script>

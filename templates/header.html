@@ -1,0 +1,24 @@
+<header id="main-header">
+    <nav>
+        <a href="/templates/index.html" class="logo-header">
+            <img src="/static/images/Gearman.png">
+            <text class="text">SpotSongS</text>
+        </a>
+
+        <div class="navbar-header">
+            <a href="">Catalogo</a>
+            <a href="">Comparador</a>
+            <a href="">Sobre</a>
+        </div>
+
+        {% if not session.access_token %}
+            <a href="/login">
+                <button id="login">LOGIN</button>
+            </a>
+        {% else %}
+            <a href="/logout">
+                <button id="logout">LOGOUT</button>
+            </a>
+        {% endif %}
+    </nav>
+</header>

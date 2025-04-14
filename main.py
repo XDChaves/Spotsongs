@@ -10,7 +10,7 @@ REDIRECT_URI = "http://127.0.0.1:5000/callback"
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1"
-AUTH_SCOPE = "user-top-read user-library-read user-read-recently-played"
+AUTH_SCOPE = "user-top-read user-library-read user-read-recently-played user-read-private"
 
 def create_app():
     app = Flask(__name__)

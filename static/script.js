@@ -57,29 +57,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+let displayedTracks = [];
+
 function getRecentTracks() {
     fetch('/recent-tracks')
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('recent-tracks');
-            container.innerHTML = "";
 
             if (data.error) {
                 container.innerHTML = "<p>Erro ao obter faixas recentes.</p>";
                 return;
             }
 
-            const list = document.createElement('ul');
+            const newTracks = [];
+            const existingTrackIds = displayedTracks.map(track => track.name + track.artist + track.album); // Identificador mais robusto
+
+            for (const track of data) {
+                const trackId = track.name + track.artist + track.album;
+                if (!existingTrackIds.includes(trackId)) {
+                    newTracks.push(track);
+                }
+            }
+
+            // Adiciona as novas músicas ao início do array displayedTracks
+            displayedTracks = [...newTracks, ...displayedTracks].slice(0, 12);// Mantém no máximo 12
+
+            // Renderiza a lista atualizada
+            container.innerHTML = "";
+            const list = document.createElement('ol');
             list.classList.add('songs-list');
 
-            data.forEach(track => {
+            displayedTracks.forEach(track => {
                 const songDiv = document.createElement('div');
                 songDiv.classList.add('songs');
                 songDiv.innerHTML = `
-                    <img src="${track.image}" width="100"><br>
-                    <strong>${track.name}</strong><br>
-                    Artista: ${track.artist}<br>
-                    Álbum: ${track.album}<br><br>
+                    <img src="${track.image}" width="100%">
+                    <div class="songname">
+                        <strong>${track.name}</strong>
+                    </div>
+                    <div class="songdetails">
+                        <p>Artista: ${track.artist}</p>
+                        <p>Álbum: ${track.album}</p>
+                    </div>
                 `;
                 list.appendChild(songDiv);
             });
@@ -92,7 +112,6 @@ function getRecentTracks() {
         });
 }
 
-// Atualiza automaticamente a cada 60 segundos
-setInterval(getRecentTracks, 60000);
+// Atualiza automaticamente a cada 20 segundos
+setInterval(getRecentTracks, 20000);
 getRecentTracks(); // executa na primeira vez
-
